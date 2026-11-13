@@ -53,20 +53,6 @@ Tile tileAt(vec3 p,vec3 n,vec3 lightDir,bool roundWell){
       axisU=normalize(vec3(-q.y,0.,q.x));metres.x=r*atan(q.y,q.x);
     }
   }`).join('\n')}
-  #ifdef BATH_HDR_LIGHTING
-  // Use the reference's metre UVs on curved soffits. Rechoosing the projection
-  // axis per fragment made joints break into noisy fragments around the arch.
-  metres=bathCeramicUV;
-  // Derive the ceramic tangent frame from its metre UVs on the actual mesh.
-  // A dominant world axis is not tangent to the curved arch soffit.
-  vec3 dpdx=dFdx(p),dpdy=dFdy(p);
-  vec2 duvdx=dFdx(metres),duvdy=dFdy(metres);
-  vec3 perpendicularY=cross(dpdy,n),perpendicularX=cross(n,dpdx);
-  vec3 tangent=perpendicularY*duvdx.x+perpendicularX*duvdy.x;
-  vec3 bitangent=perpendicularY*duvdx.y+perpendicularX*duvdy.y;
-  float frameScale=inversesqrt(max(max(dot(tangent,tangent),dot(bitangent,bitangent)),1e-12));
-  axisU=tangent*frameScale;axisV=bitangent*frameScale;
-  #endif
   vec2 size=vec2(${look.tileSize.toFixed(5)});
   vec2 uv=metres/size, cell=fract(uv)-.5;
   vec2 edge=(.5-abs(cell))*size;
@@ -81,11 +67,6 @@ Tile tileAt(vec3 p,vec3 n,vec3 lightDir,bool roundWell){
   tile.face=mix(.97,min(face.x,face.y),detail);
   tile.shade=mix(.984,mix(.53,1.,tile.face)*(.987+rand.x*.026)*(1.-cavity),detail);
   vec2 deflection=(rand-.5)*2.*tan(radians(uTileTilt))*tile.face+bevel*.085;
-  #ifdef BATH_HDR_LIGHTING
-  // The frozen Cycles material has a grout bump, but no randomly tilted faces.
-  // Preserve that distinction when comparing the same ceramic in both engines.
-  deflection=bevel*.035;
-  #endif
   tile.tilt=(axisU*deflection.x+axisV*deflection.y)*detail;
   return tile;
 }

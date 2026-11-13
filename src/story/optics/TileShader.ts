@@ -36,9 +36,6 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
       vec3 absN=abs(worldN);
       vec2 finishMetres=absN.y>.65?tilePos.xz:absN.x>absN.z?tilePos.zy:tilePos.xy;
       if(regionalAct>1.5&&absN.y<.65)finishMetres=vec2(11.*atan(tilePos.x,tilePos.z),tilePos.y);
-      #ifdef BATH_HDR_LIGHTING
-      finishMetres=bathCeramicUV;
-      #endif
       vec2 finishDx=dFdx(finishMetres),finishDy=dFdy(finishMetres);
       // Put room boundaries inside the solid wall, never on its visible face.
       // At x=-3, interpolated world positions straddled the old comparison by
@@ -69,9 +66,7 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
       // A quiet glaze-darkened strip just above the bulk water. Keep the chalk
       // mark within millimetres of contact so it cannot read as a white outline.
       float contact=wall*exp(-abs(tilePos.y-level-.006)/.009);
-      #ifndef BATH_HDR_LIGHTING
       base*=mix(vec3(1.),vec3(.64,.80,.76),wet);
-      #endif
       diffuseColor.rgb=base*mix(1.,tile.shade,porcelain*(1.-step(.5,uSurvey)))*(1.-.11*contact);
       `)
     s.fragmentShader=s.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
@@ -85,9 +80,6 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
       if(regional>=0.)clearcoatNormal=normalize(mat3(ft*fi*faceDirection,fb*fi*faceDirection,clearcoatNormal)*normalize(finishNormal));
       #endif`)
     s.fragmentShader=s.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
-      #ifdef BATH_HDR_LIGHTING
-      normal=normalize(normal+mat3(viewMatrix)*tile.tilt*porcelain);
-      #endif
       vec3 fx=dFdx(-vViewPosition),fy=dFdy(-vViewPosition);
       vec3 px=cross(fy,normal),py=cross(normal,fx);
       vec3 ft=px*finishDx.x+py*finishDy.x,fb=px*finishDx.y+py*finishDy.y;
@@ -111,20 +103,6 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
       #include <lights_fragment_begin>`)
     s.fragmentShader=s.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
       if(uSurvey<.5&&tilePos.y<level)reflectedLight.directDiffuse*=causticLight(tilePos,level,tileSun,tileTime);
-      #ifdef BATH_HDR_LIGHTING
-      if(uSurvey<.5&&tilePos.y<level){
-        // The bath's indirect term is already baked, so an ungated caustic gain
-        // paints a moving water web into arcades that sit under no well at all.
-        // Gate it with the same gaussian well footprint used by the hall finish:
-        // caustics belong to the pools directly beneath an aperture.
-        vec2 wellP=tilePos.xz;float wellAccess=0.;
-        ${bathPlan.lightWells.map(w=>{
-          const b=w.bounds,c=[(b[0]+b[1])/2,(b[2]+b[3])/2],size=[(b[1]-b[0])*.75,(b[3]-b[2])*.75]
-          return `{vec2 q=(wellP-vec2(${c.map(n=>n.toFixed(5))}))/vec2(${size.map(n=>n.toFixed(5))});wellAccess=max(wellAccess,exp(-dot(q,q)));}`
-        }).join('\n')}
-        reflectedLight.indirectDiffuse*=mix(vec3(1.),causticLight(tilePos,level,tileSun,tileTime),smoothstep(.14,.52,wellAccess));
-      }
-      #endif
       if(uSurvey<.5&&wall>.5&&tilePos.y>level&&tilePos.y<level+1.1){
         // A local reflected shimmer above the contact line, from the same wake.
         vec2 wetSide=tilePos.xz+worldN.xz*.22;
@@ -132,7 +110,6 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
         float shimmer=clamp(-(curve.x+curve.y)*.9,-.12,.18)*exp(-(tilePos.y-level)*3.);
         reflectedLight.indirectDiffuse*=1.+shimmer;
       }
-      #ifndef BATH_HDR_LIGHTING
       ${hall?`if(tilePos.x < -2.75 && tilePos.z > 21.96){
         // Three actual roof wells. The shared metal/glaze environment must be
         // occluded under these low vaults, especially behind the blind pier.
@@ -148,8 +125,7 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
         #ifdef USE_CLEARCOAT
         clearcoatSpecularIndirect*=mix(.07,.60,skyAccess);
         #endif
-      }`:''}
-      #endif`)
+      }`:''}`)
     s.fragmentShader=s.fragmentShader.replace('#include <opaque_fragment>',`
       ${well?'if(uSurvey<.5)outgoingLight+=shaftScatter(cameraPosition,tilePos,level);':''}
       #include <opaque_fragment>

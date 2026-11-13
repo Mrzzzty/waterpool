@@ -56,6 +56,27 @@ docs/                        设计文档与调研
 - `src/story/Inspection.ts` — 交互、存档、结算
 - `src/story/StoryWater.ts`、`src/story/optics/*` — 剧情专用水面与光学
 
+## 已删除的模块（不要再假设它们存在）
+
+以下几点曾多次误导外部评审，因为它们看起来像现役系统，实际从未接入运行时：
+
+| 曾经的文件 | 真实状态 |
+|---|---|
+| `src/story/bakedBathLighting.ts` | 无任何调用，构建时被 tree-shake。`BATH_HDR_LIGHTING` 只在此处定义，因此所有 `#ifdef BATH_HDR_LIGHTING` 分支从不编译 |
+| `src/story/BathWallReflection.ts` | 从未实例化，主隔断墙没有实时平面反射 |
+| `src/story/assets/bath-light-*.exr` | 伊始没有任何代码加载，只是烘焙中间产物 |
+| `src/story/assets/bath-probe-*.exr`、`bath-probe-visibility.*` | 只有上面那个未接入的模块引用 |
+
+**剧情模式的实际光照路径是 `storyArchitecture` → `prepareAtlas`，读顶点色 `color`，与 `world/` 同一套逐顶点 Cycles 烘焙。项目里不存在已跑通的纹素级 lightmap。**
+
+## 真实在用的部分
+
+- 顶点烘焙 GI：`src/world/AtlasMaterial.ts`（`atlasGI² × 4` 解码）
+- 水面光学：`src/story/StoryWater.ts` + `src/story/optics/WaterShader.ts`（Reflector 镜像、四次屏幕空间折射迭代、同源浅波焦散）
+- 瓷砖材质：`src/story/optics/TileShader.ts` + `ceramic.ts`
+- AgX 显示：`src/story/BlenderDisplay.tsx`（65³ 3D LUT，两处挂载）
+- Blender 倒角：`scripts/blender_current_scene.py` 的 12 mm BEVEL
+
 ## 不要读的文件
 
 这些是二进制资产，读出来是乱码，且体积占满上下文：
