@@ -7,11 +7,8 @@
 **整个仓库的纯文本代码只有约 1.2 MB（~32 万 token），二进制资产约 72 MB。**
 如果要通读代码，请只读文本文件，跳过下面"不要读的文件"一节。
 
-如果当前工具是按整包 zip 读取仓库，会被二进制资源撑爆，导致后面的源码读不全。更稳的做法有两种：
-
-1. 关联 `source` 分支（只有文本代码，约 1 MB）；
-2. 或按 raw 链接逐个读取，例如
-   `https://raw.githubusercontent.com/Mrzzzty/waterpool/main/src/world/mapPlan.ts`
+如果当前工具是按整包 zip 读取仓库，会被二进制资源撑爆，导致后面的源码读不全。请按 raw 链接逐个读取，例如
+`https://raw.githubusercontent.com/Mrzzzty/waterpool/main/src/world/mapPlan.ts`
 
 ## 目录结构
 
