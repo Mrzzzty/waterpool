@@ -39,9 +39,15 @@ def materials():
         mat=bpy.data.materials.new('Pool '+name);mat.use_nodes=True
         n=mat.node_tree.nodes;l=mat.node_tree.links;bs=principled(mat);bs.inputs['Roughness'].default_value=.55
         uv=n.new('ShaderNodeUVMap');uv.uv_map='SurfaceUV'
-        scale=n.new('ShaderNodeVectorMath');scale.operation='SCALE';scale.inputs[3].default_value=1/period;l.new(uv.outputs['UV'],scale.inputs[0])
+        scale=n.new('ShaderNodeVectorMath');scale.operation='SCALE';scale.inputs[3].default_value=1/period;
+        # Broad staining breaks the tile repeat without moving the joints.
+        macro=n.new('ShaderNodeTexNoise');macro.inputs['Scale'].default_value=.055;macro.inputs['Detail'].default_value=2.
+        macroRamp=n.new('ShaderNodeValToRGB');macroRamp.color_ramp.elements[0].position=.36;macroRamp.color_ramp.elements[0].color=(.90,.90,.90,1)
+        macroRamp.color_ramp.elements[1].position=.64;macroRamp.color_ramp.elements[1].color=(1.09,1.09,1.09,1)
+        l.new(uv.outputs['UV'],scale.inputs[0]);l.new(uv.outputs['UV'],macro.inputs['Vector']);l.new(macro.outputs['Fac'],macroRamp.inputs[0])
+        macroMix=n.new('ShaderNodeMixRGB');macroMix.blend_type='MULTIPLY';macroMix.inputs[0].default_value=1.;l.new(macroRamp.outputs['Color'],macroMix.inputs[1])
         tex=n.new('ShaderNodeTexImage');tex.image=bpy.data.images.load(str(ROOT/('public/assets/open-surfaces/plaster_color.jpg' if name=='plaster' else f'public/assets/pool-surfaces/{name}_color.png')),check_existing=True)
-        l.new(scale.outputs['Vector'],tex.inputs['Vector']);l.new(tex.outputs['Color'],bs.inputs['Base Color'])
+        l.new(scale.outputs['Vector'],tex.inputs['Vector']);l.new(tex.outputs['Color'],macroMix.inputs[2]);l.new(macroMix.outputs[0],bs.inputs['Base Color'])
         result.append(mat)
     for i,original in enumerate(list(result)):
         mat=original.copy();mat.name=original.name.replace('Pool ','Modern ')
@@ -60,7 +66,12 @@ def materials():
         uv=n.new('ShaderNodeUVMap');uv.uv_map='SurfaceUV'
         scale=n.new('ShaderNodeVectorMath');scale.operation='SCALE';scale.inputs[3].default_value=1/period
         tex=n.new('ShaderNodeTexImage');tex.image=bpy.data.images.load(str(ROOT/'src/assets/surfaces'/(name+'_color.png')),check_existing=True)
-        l.new(uv.outputs['UV'],scale.inputs[0]);l.new(scale.outputs['Vector'],tex.inputs['Vector']);l.new(tex.outputs['Color'],bs.inputs['Base Color'])
+        # Broad staining breaks the 1.6 m tile repeat without moving the joints.
+        macro=n.new('ShaderNodeTexNoise');macro.inputs['Scale'].default_value=.055;macro.inputs['Detail'].default_value=2.
+        macroRamp=n.new('ShaderNodeValToRGB');macroRamp.color_ramp.elements[0].position=.36;macroRamp.color_ramp.elements[0].color=(.90,.90,.90,1)
+        macroRamp.color_ramp.elements[1].position=.64;macroRamp.color_ramp.elements[1].color=(1.09,1.09,1.09,1)
+        l.new(uv.outputs['UV'],scale.inputs[0]);l.new(uv.outputs['UV'],macro.inputs['Vector']);l.new(macro.outputs['Fac'],macroRamp.inputs[0])
+        macroMix=n.new('ShaderNodeMixRGB');macroMix.blend_type='MULTIPLY';macroMix.inputs[0].default_value=1.;l.new(macroRamp.outputs['Color'],macroMix.inputs[1]);l.new(scale.outputs['Vector'],tex.inputs['Vector']);l.new(tex.outputs['Color'],macroMix.inputs[2]);l.new(macroMix.outputs[0],bs.inputs['Base Color'])
         result.append(mat)
     return result
 

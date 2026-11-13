@@ -19,7 +19,15 @@ export const libraryGLSL=/* glsl */`
 uniform sampler2D regionalColor,regionalDetail;
 uniform float uCellRes,uCellPad,uAtlasRes;
 struct RegionalSurface{vec3 color;vec4 detail;};
-RegionalSurface regionalSurface(float index,vec2 metres,vec2 dx,vec2 dy){
+// Large-scale variation so a repeated tile cell never reads as a wallpaper.
+// The joints stay aligned; only broad staining and batch colour drift changes.
+float macroHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float macroNoise(vec2 p){
+  vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(macroHash(i),macroHash(i+vec2(1.,0.)),f.x),
+             mix(macroHash(i+vec2(0.,1.)),macroHash(i+vec2(1.,1.)),f.x),f.y);
+}
+RegionalSurface regionalSurface(float index,vec2 metres,vec2 dx,vec2 dy,vec3 worldPos){
   float period=abs(index-2.)<.5?2.4:1.6;
   vec2 cell=vec2(mod(index,2.),floor(index/2.));
   float stride=uCellRes+2.*uCellPad;
@@ -27,6 +35,11 @@ RegionalSurface regionalSurface(float index,vec2 metres,vec2 dx,vec2 dy){
   RegionalSurface s;
   s.color=textureGrad(regionalColor,uv,dx/period*(uCellRes/uAtlasRes),dy/period*(uCellRes/uAtlasRes)).rgb;
   s.detail=textureGrad(regionalDetail,uv,dx/period*(uCellRes/uAtlasRes),dy/period*(uCellRes/uAtlasRes));
+  // World space, not the metre UV: otherwise two columns with identical UV
+  // receive the identical stain and still read as a copy-paste.
+  float macro=macroNoise(worldPos.xz*.055)*.55+macroNoise(worldPos.xz*.19+worldPos.y*.11)*.45;
+  s.color*=mix(.66,1.34,macro);
+  s.detail.a*=.86+.28*macro;
   return s;
 }
 float regionalFinish(vec3 p,float finish,float modern){

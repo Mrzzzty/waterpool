@@ -33,7 +33,7 @@ export function addHallFinish(material:MeshStandardMaterial,library:SurfaceLibra
       vec3 finishAxis=abs(normalize(finishWorldNormal));
       vec2 finishUV=finishAxis.y>.65?finishPosition.xz:finishAxis.x>finishAxis.z?finishPosition.zy:finishPosition.xy;
       vec2 finishDx=dFdx(finishUV),finishDy=dFdy(finishUV);
-      RegionalSurface finish=regionalSurface(${kind===1?'1.':'2.'},finishUV,finishDx,finishDy);
+      RegionalSurface finish=regionalSurface(${kind===1?'1.':'2.'},finishUV,finishDx,finishDy,finishPosition);
       ${kind===1?'diffuseColor.rgb=mix(diffuseColor.rgb,finish.color,.78);':
         `diffuseColor.rgb*=mix(1.,clamp(dot(finish.color,vec3(.2126,.7152,.0722))/.63,.82,1.10),${kind===0?'.22':'.72'});`}`)
     shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`

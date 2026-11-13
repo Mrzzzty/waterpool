@@ -51,7 +51,7 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
         absN.y>.65?(tilePos.y>level+.04?2.:regionalAct<.5&&serviceSide?0.:3.):
         regionalAct>.5&&regionalAct<1.5?1.:regionalAct>1.5&&tilePos.y< -1.?3.:
         regionalAct<.5&&serviceSide&&!bathSide?1.:0.;
-      RegionalSurface finishSample=regionalSurface(max(0.,regional),finishMetres,finishDx,finishDy);
+      RegionalSurface finishSample=regionalSurface(max(0.,regional),finishMetres,finishDx,finishDy,tilePos);
       if(regional>=0.){tile.shade=1.;tile.tilt=vec3(0.);tile.face=1.-smoothstep(.55,.75,finishSample.detail.a);}
       float wall=1.-smoothstep(.45,.7,abs(worldN.y)),wet=1.-smoothstep(level-.005,level+.012,tilePos.y);
       float poolFinish=${hall?'mix(uPoolLook,poolLookAt(tilePos.xz),step(21.96,tilePos.z))':'uPoolLook'};

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "sourceFingerprint": "571c3c27e9b78698e8a580532f13a0898ed97476b26e0149615fe86971cc992c",
+  "blender": "5.2.2 LTS",
+  "asset": "poolrooms-baked-raw.glb",
+  "giRange": 4,
+  "giMethod": "Cycles 128 samples / 8 diffuse bounces / 0.65m maximum GI edges / occluded sky / topology-aware denoise",
+  "sun": {
+    "direction": [
+      1,
+      0.86,
+      -0.36
+    ],
+    "intensity": 3.5,
+    "color": "#fff2df"
+  },
+  "meshes": 5,
+  "vertices": 125285,
+  "triangles": 248381,
+  "bytes": 2400032,
+  "dynamicLighting": "Static sun direction, runtime strength/color follows day cycle",
+  "slideThickness": 0.028,
+  "id": "shaft",
+  "contentHash": "f23803f2345318410c1981cd2b6915925c3b70de1e4cb8f0791d83117d278ba2",
+  "rawBytes": 8791424
+}

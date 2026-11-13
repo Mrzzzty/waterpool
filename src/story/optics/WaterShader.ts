@@ -138,7 +138,7 @@ export function basinShader(basin:Basin,edge:ReturnType<typeof shoreline>){
     ${bath?`// The analytical fallback must use the same finish as the actual floor.
     vec3 an=abs(h.normal);
     vec2 finishMetres=an.y>.65?hit.xz:an.x>an.z?hit.zy:hit.xy;
-    RegionalSurface finish=regionalSurface(0.,finishMetres,dFdx(finishMetres),dFdy(finishMetres));
+    RegionalSurface finish=regionalSurface(0.,finishMetres,dFdx(finishMetres),dFdy(finishMetres),hit);
     vec3 smoothLight=texture2DLodEXT(uSurveyDiffuse,uv,1.).rgb;
     if(h.normal.y<.5)smoothLight*=.62+.25*max(0.,dot(h.normal,uSun));
     vec3 textured=smoothLight*finish.color*vec3(.99,1.025,1.055)*causticLight(hit,uWaterLevel,uSun,uTime);

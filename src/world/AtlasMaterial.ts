@@ -40,7 +40,7 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
    // Match the authored relief strengths: mosaic 1.85, porcelain 2.10,
    // travertine 2.00, reed glaze 1.65; plaster is intentionally restrained.
    float normalStrength=finish<0.?.35:finish<.5?2.10:finish<1.5?1.65:finish<2.5?2.00:1.85;
-   RegionalSurface tex=regionalSurface(max(0.,finish),uv,dx,dy);
+   RegionalSurface tex=regionalSurface(max(0.,finish),uv,dx,dy,atlasPosition);
    vec3 albedo=finish<0.?vec3(.74,.79,.80):tex.color;
    ${fixture?'albedo=vec3(1.);':''}
    float wetBand=(1.-underwater)*(1.-smoothstep(level+.01,level+.08,atlasPosition.y));
@@ -76,9 +76,7 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
   // three, so the gain rides on a built-in channel instead: emissive.r carries
   // gain/40 and totalEmissiveRadiance is cleared right after so nothing glows.
   patch('#include <lights_fragment_maps>',`#include <lights_fragment_maps>
-   irradiance+=atlasLight*(emissive.r*40.);`)
-  patch('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
-   totalEmissiveRadiance=vec3(0.);`)
+   irradiance+=atlasLight*atlasGain;`)
   patch('#include <lights_fragment_end>',`#include <lights_fragment_end>
    if(uSurvey<.5&&underwater>.5)reflectedLight.directDiffuse*=causticLight(atlasPosition,level,atlasSun,atlasTime);`)
   s.fragmentShader=s.fragmentShader.replace('#include <opaque_fragment>',`#include <opaque_fragment>
@@ -93,10 +91,7 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
 export function prepareAtlas(source:T.Object3D,plan:MapPlan,library:SurfaceLibrary,lighting:AtlasLighting){
  const root=new T.Group();root.name='Cycles map / '+plan.id
  const ceramic=atlasMaterial(plan,library,lighting),fixture=atlasMaterial(plan,library,lighting,true)
- // Gain travels on material.emissive.r (see atlasMaterial); expose both pools so
- // the owner can retune it per daylight cycle.
  root.userData.materials=[ceramic,fixture]
- ceramic.emissive.r=fixture.emissive.r=(lighting.gain?.value??Math.PI)/40
  source.updateMatrixWorld(true)
  source.traverse(o=>{
   if(!(o instanceof T.Mesh))return

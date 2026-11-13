@@ -25,7 +25,7 @@ export default function LiminalArchitecture({cycle,quality}:{caustics:T.Texture;
  const giScale=location.search.includes('gi=off')?0:1
  // Baked GI weight; 0.10 is the historical value that leaves the bake at ~5% of
  // the lit result. Override with ?giWeight= to rebalance without a rebuild.
- const giWeight=Number(new URLSearchParams(location.search).get('giWeight')||1)
+ const giWeight=Number(new URLSearchParams(location.search).get('giWeight')||0.10)
  const data=useMemo(()=>{
   const library=prepareSurfaceLibrary(maps,gl.capabilities.getMaxAnisotropy(),quality==='high')
   const gain={value:giScale*Math.PI*giWeight*cycle.indirectScale},sun={value:new T.Vector3(-.55,.55,.63).normalize()}

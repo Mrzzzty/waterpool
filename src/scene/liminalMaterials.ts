@@ -116,7 +116,7 @@ export function createArchitectureMaterial(palette:PoolSurfacePalette, caustics:
     // Classify the room just inside the face, away from coplanar room bounds.
     vec3 surfaceRoomPosition=vLiminalWorld+normalize(vLiminalNormal)*.04;
     float regional=regionalFinish(surfaceRoomPosition,finish,modern);
-    RegionalSurface regionalSample=regionalSurface(max(0.,regional),surfaceUV,surfaceDx,surfaceDy);
+    RegionalSurface regionalSample=regionalSurface(max(0.,regional),surfaceUV,surfaceDx,surfaceDy,surfaceRoomPosition);
     if(regional>=0.){
       surfaceColor=regionalSample.color;surfaceDetail=regionalSample.detail;normalStrength=1.2;
     }
