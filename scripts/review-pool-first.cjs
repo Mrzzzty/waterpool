@@ -68,6 +68,10 @@ app.whenReady().then(async()=>{
     return {count:out.length,materials:out.slice(0,6)}})()`)
    results.push({check:'gi-probe',...probe})
   }
+  if(process.env.POOL_LIGHT_PROBE==='1'){
+   const lights=await js(`(()=>{const g=window.__inspection,out=[];g.scene.traverse(o=>{if(o.isLight)out.push({type:o.type,name:o.name,intensity:+o.intensity.toFixed(3),color:'#'+o.color.getHexString(),cast:!!o.castShadow})});return out})()`)
+   results.push({check:'lights',lights})
+  }
   await snapshot('entry',[-4.6,1.83,28.6],[-10.1,.3,28.15])
   await snapshot('curve',[-12,1.17,29.8],[-17.2,1.35,27.1])
   if(process.env.POOL_WATER_DIAG==='1'){

@@ -854,7 +854,7 @@ export class Inspection {
     this.fog.color.copy(this.tint)
     this.fog.near=T.MathUtils.damp(this.fog.near,under?.6:24,5,dt)
     this.fog.far=T.MathUtils.damp(this.fog.far,under?23:this.act==='hall'?65:56,5,dt)
-    this.sun.color.copy(room.sky.direct);this.sun.intensity=room.sky.strength
+    this.sun.color.copy(room.sky.direct);this.sun.intensity=room.sky.strength*Number(new URLSearchParams(location.search).get('sunMul')||1)
     if(Math.abs(room.sky.elevation-this.elevationMark)>.12){
       this.elevationMark=room.sky.elevation
       this.orientKey(this.sun,this.act,this.elevationMark);this.sun.shadow.needsUpdate=true

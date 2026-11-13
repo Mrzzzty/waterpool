@@ -75,6 +75,29 @@ docs/                        设计文档与调研
 - 水面光学：`src/story/StoryWater.ts` + `src/story/optics/WaterShader.ts`（Reflector 镜像、四次屏幕空间折射迭代、同源浅波焦散）
 - 瓷砖材质：`src/story/optics/TileShader.ts` + `ceramic.ts`
 - AgX 显示：`src/story/BlenderDisplay.tsx`（65³ 3D LUT，两处挂载）
+
+## 渲染诊断开关
+
+| 参数 / 环境变量 | 作用 |
+|---|---|
+| `?gi=off` | 把烘焙 GI 权重归零，隔离直射光 |
+| `?giWeight=2` | 缩放烘焙 GI 权重，默认 1（等价原设计 π） |
+| `?sunMul=0.5` | 缩放剧情场景方向光强度 |
+| `POOL_GI_PASSES=0` | 重新导出时控制 GI 平滑遍数 |
+| `POOL_LIGHT_PROBE=1` | 截图脚本额外输出运行时灯光列表 |
+| `POOL_GI_PROBE=1` | 截图脚本输出材质的编译期 uniform |
+
+### 一个必须知道的坑
+
+**three.js 不会上传内置材质在 `onBeforeCompile` 里新增的自定义 uniform。** `materialProperties.uniforms` 只来自 `ShaderLib[shaderID].uniforms`，所以 `shader.uniforms.myValue = {value}` 在 JS 侧读得到、GPU 侧恒为 0。
+
+烘焙 GI 的增益曾因此长期失效：`irradiance += atlasLight * atlasGain` 中的 `atlasGain` 永远是 0，Cycles 烘焙实际上从未参与着色。现在的做法是把增益编码进内建 uniform：
+
+```glsl
+irradiance += atlasLight * (emissive.r * 40.);   // emissive.r 存 gain/40
+totalEmissiveRadiance = vec3(0.);                 // 紧随其后清零，避免发光
+```
+
 - Blender 倒角：`scripts/blender_current_scene.py` 的 12 mm BEVEL
 
 ## 不要读的文件
