@@ -180,7 +180,9 @@ export class Scenery {
   sunDirection={value:new T.Vector3(.1,1,-.325).normalize()}
   private batches=new Map<T.Material,T.Matrix4[]>()
   private block=new T.BoxGeometry()
-  readonly bakedGain={value:Math.PI}
+  // Baked GI gain for the story acts. Historically fixed at PI; expose it so the
+ // balance against direct sunlight can be measured rather than guessed.
+ readonly bakedGain={value:Math.PI*Number(new URLSearchParams(location.search).get('giWeight')||1)}
   private propMaterials=new Set<T.Material>()
   updateDaylight(){updateWellCaps(this.root,this.sky.fill,this.bakedGain.value/Math.PI/.76)}
   private tile:T.MeshStandardMaterial
@@ -198,6 +200,8 @@ export class Scenery {
     this.tile=makeCeramic(act,this.opticsSettings,this.time,this.depth,this.sideDepth,this.sunDirection,surfaceLibrary)
     const built=storyArchitecture(hallArchitecture,act,surfaceLibrary,{time:this.time,sun:this.sunDirection,gain:this.bakedGain,main:this.depth,side:this.sideDepth,controls:this.opticsSettings})
     this.root.add(built.root);this.blockers.push(...built.blockers)
+    // Gain rides on emissive.r for built-in materials; keep it in sync here.
+    for(const m of (built.root.userData.materials as T.MeshPhysicalMaterial[]|undefined)??[])m.emissive.r=this.bakedGain.value/40
     if(act==='hall')this.hall(connected)
     else if(act==='arcade')this.arcade()
     else this.shaft()

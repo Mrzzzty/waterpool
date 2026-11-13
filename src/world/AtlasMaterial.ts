@@ -72,8 +72,13 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
       'ctx',JSON.stringify(f.slice(Math.max(0,i-26),i+30)))
    }
   }
+  // A custom `shader.uniforms` entry on a built-in material is not uploaded by
+  // three, so the gain rides on a built-in channel instead: emissive.r carries
+  // gain/40 and totalEmissiveRadiance is cleared right after so nothing glows.
   patch('#include <lights_fragment_maps>',`#include <lights_fragment_maps>
-   irradiance+=atlasLight*atlasGain;`)
+   irradiance+=atlasLight*(emissive.r*40.);`)
+  patch('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+   totalEmissiveRadiance=vec3(0.);`)
   patch('#include <lights_fragment_end>',`#include <lights_fragment_end>
    if(uSurvey<.5&&underwater>.5)reflectedLight.directDiffuse*=causticLight(atlasPosition,level,atlasSun,atlasTime);`)
   s.fragmentShader=s.fragmentShader.replace('#include <opaque_fragment>',`#include <opaque_fragment>
@@ -88,6 +93,10 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
 export function prepareAtlas(source:T.Object3D,plan:MapPlan,library:SurfaceLibrary,lighting:AtlasLighting){
  const root=new T.Group();root.name='Cycles map / '+plan.id
  const ceramic=atlasMaterial(plan,library,lighting),fixture=atlasMaterial(plan,library,lighting,true)
+ // Gain travels on material.emissive.r (see atlasMaterial); expose both pools so
+ // the owner can retune it per daylight cycle.
+ root.userData.materials=[ceramic,fixture]
+ ceramic.emissive.r=fixture.emissive.r=(lighting.gain?.value??Math.PI)/40
  source.updateMatrixWorld(true)
  source.traverse(o=>{
   if(!(o instanceof T.Mesh))return

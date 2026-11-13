@@ -25,7 +25,7 @@ export default function LiminalArchitecture({cycle,quality}:{caustics:T.Texture;
  const giScale=location.search.includes('gi=off')?0:1
  // Baked GI weight; 0.10 is the historical value that leaves the bake at ~5% of
  // the lit result. Override with ?giWeight= to rebalance without a rebuild.
- const giWeight=Number(new URLSearchParams(location.search).get('giWeight')||0.10)
+ const giWeight=Number(new URLSearchParams(location.search).get('giWeight')||1)
  const data=useMemo(()=>{
   const library=prepareSurfaceLibrary(maps,gl.capabilities.getMaxAnisotropy(),quality==='high')
   const gain={value:giScale*Math.PI*giWeight*cycle.indirectScale},sun={value:new T.Vector3(-.55,.55,.63).normalize()}
@@ -33,7 +33,7 @@ export default function LiminalArchitecture({cycle,quality}:{caustics:T.Texture;
   root.add(makeWellCaps(roamPlan))
   return {root,library,gain}
  },[source,maps,gl,cycle,quality])
- useFrame(()=>{data.gain.value=giScale*Math.PI*giWeight*cycle.indirectScale;updateWellCaps(data.root,cycle.indirectTint,cycle.indirectScale)},-3.4)
+ useFrame(()=>{const g=giScale*Math.PI*giWeight*cycle.indirectScale;data.gain.value=g;for(const m of (data.root.userData.materials as T.MeshPhysicalMaterial[]|undefined)??[])m.emissive.r=g/40;updateWellCaps(data.root,cycle.indirectTint,cycle.indirectScale)},-3.4)
  useEffect(()=>{for(const u of quality==='high'?libraryURLs:libraryHQURLs)useLoader.clear(T.TextureLoader,u)},[quality])
  useEffect(()=>{gl.shadowMap.needsUpdate=true;return()=>{
   const materials=new Set<T.Material>()
