@@ -59,15 +59,20 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
   const patch=(key:string,body:string)=>{
    const before=s.fragmentShader
    s.fragmentShader=s.fragmentShader.replace(key,body)
-   if(s.fragmentShader===before)console.warn('[atlas] shader patch missed:',key,plan.id)
+   if(s.fragmentShader===before){
+    const f=s.fragmentShader,i=f.indexOf('lights_fragment_maps')
+    console.warn('[atlas] shader patch missed:',key,plan.id,
+      'at',i,
+      'ctx',JSON.stringify(f.slice(Math.max(0,i-26),i+30)))
+   }
   }
-  patch('#include <lights_fragment_maps>',`#include <lights_fragment_maps>`)
+  patch('#include <lights_fragment_maps>',`#include <lights_fragment_maps>
+   irradiance+=atlasLight*atlasGain;`)
   patch('#include <lights_fragment_end>',`#include <lights_fragment_end>
    if(uSurvey<.5&&underwater>.5)reflectedLight.directDiffuse*=causticLight(atlasPosition,level,atlasSun,atlasTime);`)
   s.fragmentShader=s.fragmentShader.replace('#include <opaque_fragment>',`#include <opaque_fragment>
    if(uSurvey>.5)gl_FragColor.a=.5;
-   if(uSurvey>1.5)gl_FragColor=vec4((reflectedLight.directDiffuse+reflectedLight.indirectDiffuse)/max(material.diffuseColor,vec3(.015)),1.);
-   if(uSurvey>2.5)gl_FragColor=vec4(vec3(dot(atlasLight,vec3(.2126,.7152,.0722))),1.);`)
+   if(uSurvey>1.5)gl_FragColor=vec4((reflectedLight.directDiffuse+reflectedLight.indirectDiffuse)/max(material.diffuseColor,vec3(.015)),1.);`)
  }
  return m
 }
