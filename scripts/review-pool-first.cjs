@@ -27,9 +27,9 @@ app.whenReady().then(async()=>{
   await fs.writeFile(path.join(out,name+'.png'),(await win.webContents.capturePage()).toPNG())
  }
  try{
-  const start=Date.now();await win.loadURL('http://127.0.0.1:'+server.address().port+'/story.html?preview=pool&calibrate=1')
+  const start=Date.now();await win.loadURL('http://127.0.0.1:'+server.address().port+'/story.html?preview=pool&calibrate=1'+(process.env.POOL_EXTRA_QUERY||''))
   for(let i=0;i<180;i++){await sleep(500);if(await js('!!window.__inspection&&!document.querySelector(".pool-loading")'))break;await js('window.__inspection?.scene.__r3f.root.getState().advance(performance.now(),true)')}
-  results.push(await js(`(()=>{const g=window.__inspection;if(!g)throw Error('Scene not ready');const style=document.createElement('style');style.textContent='.inspection,.hud{display:none!important}';document.head.append(style);const c=g.renderer.domElement;return {check:'startup',buffer:[c.width,c.height],context:!g.renderer.getContext().isContextLost(),programs:g.renderer.info.programs.length}})()`))
+  results.push(await js(`(()=>{const g=window.__inspection;if(!g)throw Error('Scene not ready');const style=document.createElement('style');style.textContent='.inspection,.hud{display:none!important}';document.head.append(style);const c=g.renderer.domElement;return {check:'startup',buffer:[c.width,c.height],context:!g.renderer.getContext().isContextLost(),programs:g.renderer.info.programs.length,url:location.search}})()`))
   results[0].elapsedMs=Date.now()-start
   if(process.env.POOL_CONNECTION==='1'){
    // Exercise the actual controller/React crossing handlers with synthetic

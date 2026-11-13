@@ -307,13 +307,17 @@ def smooth_indirect(mesh):
     direction=unique[:,1:].astype(np.float32);direction/=np.maximum(np.linalg.norm(direction,axis=1,keepdims=True),.000001)
     keep=(a!=b)&((direction[a]*direction[b]).sum(axis=1)>.97);a,b=a[keep],b[keep]
     a,b=np.concatenate([a,b]),np.concatenate([b,a])
-    for _ in range(4):
+    # Four passes spread influence roughly 2.6 m across a 0.65 m mesh, which is
+    # exactly the broad mottling seen on long walls. Keep the count adjustable so
+    # the field can be compared against unfiltered Cycles values.
+    passes=int(os.environ.get('POOL_GI_PASSES','4'))
+    for _ in range(passes):
         weights=1/(1+np.linalg.norm(color[a]-color[b],axis=1)*5)
         total=np.zeros((n,3),np.float32);weight=np.zeros(n,np.float32)
         np.add.at(total,a,color[b]*weights[:,None]);np.add.at(weight,a,weights)
         average=total/np.maximum(weight[:,None],1)
         color=np.where((weight>0)[:,None],color*.5+average*.5,color)
-    report('gi_denoise',corners=count,surfaceSamples=n,passes=4)
+    report('gi_denoise',corners=count,surfaceSamples=n,passes=passes)
     return color[inverse]
 
 def export():

@@ -21,14 +21,19 @@ export default function LiminalArchitecture({cycle,quality}:{caustics:T.Texture;
  const source=useLoader(GLTFLoader,atlasURLs[0],l=>l.setMeshoptDecoder(MeshoptDecoder))
  const maps=useLoader(T.TextureLoader,quality==='high'?libraryHQURLs:libraryURLs)
  const {gl}=useThree()
+ // Diagnostic switch: ?gi=off isolates direct lighting from the baked vertex GI.
+ const giScale=location.search.includes('gi=off')?0:1
+ // Baked GI weight; 0.10 is the historical value that leaves the bake at ~5% of
+ // the lit result. Override with ?giWeight= to rebalance without a rebuild.
+ const giWeight=Number(new URLSearchParams(location.search).get('giWeight')||0.10)
  const data=useMemo(()=>{
   const library=prepareSurfaceLibrary(maps,gl.capabilities.getMaxAnisotropy(),quality==='high')
-  const gain={value:Math.PI*.10*cycle.indirectScale},sun={value:new T.Vector3(-.55,.55,.63).normalize()}
+  const gain={value:giScale*Math.PI*giWeight*cycle.indirectScale},sun={value:new T.Vector3(-.55,.55,.63).normalize()}
   const root=prepareAtlas(source.scene,roamPlan,library,{time:worldUniforms.uTime,sun,gain})
   root.add(makeWellCaps(roamPlan))
   return {root,library,gain}
  },[source,maps,gl,cycle,quality])
- useFrame(()=>{data.gain.value=Math.PI*.10*cycle.indirectScale;updateWellCaps(data.root,cycle.indirectTint,cycle.indirectScale)},-3.4)
+ useFrame(()=>{data.gain.value=giScale*Math.PI*giWeight*cycle.indirectScale;updateWellCaps(data.root,cycle.indirectTint,cycle.indirectScale)},-3.4)
  useEffect(()=>{for(const u of quality==='high'?libraryURLs:libraryHQURLs)useLoader.clear(T.TextureLoader,u)},[quality])
  useEffect(()=>{gl.shadowMap.needsUpdate=true;return()=>{
   const materials=new Set<T.Material>()

@@ -7,6 +7,10 @@ export type AtlasLighting={time:{value:number};sun:{value:T.Vector3};gain:{value
 export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLighting,fixture=false){
  const m=new T.MeshPhysicalMaterial({color:fixture?'#8fa5a1':'#ffffff',roughness:fixture?.48:.4,metalness:fixture?.18:0,clearcoat:fixture?.1:.24,clearcoatRoughness:.12})
  const controls=light.controls??opticsControls()
+ // Diagnostic: ?gi=survey renders the decoded bake itself, so the attribute can be
+ // inspected without guessing whether irradiance survives to shading.
+ const surveyGI=typeof location!=='undefined'&&location.search.includes('gi=survey')
+ if(surveyGI)controls.uSurvey.value=3
  m.customProgramCacheKey=()=>`atlas-v1-${plan.id}-${fixture}`
  m.onBeforeCompile=s=>{
   Object.assign(s.uniforms,controls,{atlasTime:light.time,atlasSun:light.sun,atlasGain:light.gain,atlasMain:light.main??{value:plan.pools[0]?.level??-100},atlasSide:light.side??{value:plan.pools[1]?.level??-100}})
@@ -52,13 +56,18 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
    material.clearcoat=mix(material.clearcoat,.06,underwater)*(1.-step(.5,uSurvey));
    material.clearcoatRoughness=mix(material.clearcoatRoughness,.21,underwater);
    #endif`)
-  s.fragmentShader=s.fragmentShader.replace('#include <lights_fragment_maps>',`#include <lights_fragment_maps>
-   irradiance+=atlasLight*atlasGain;`)
-  s.fragmentShader=s.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
+  const patch=(key:string,body:string)=>{
+   const before=s.fragmentShader
+   s.fragmentShader=s.fragmentShader.replace(key,body)
+   if(s.fragmentShader===before)console.warn('[atlas] shader patch missed:',key,plan.id)
+  }
+  patch('#include <lights_fragment_maps>',`#include <lights_fragment_maps>`)
+  patch('#include <lights_fragment_end>',`#include <lights_fragment_end>
    if(uSurvey<.5&&underwater>.5)reflectedLight.directDiffuse*=causticLight(atlasPosition,level,atlasSun,atlasTime);`)
   s.fragmentShader=s.fragmentShader.replace('#include <opaque_fragment>',`#include <opaque_fragment>
    if(uSurvey>.5)gl_FragColor.a=.5;
-   if(uSurvey>1.5)gl_FragColor=vec4((reflectedLight.directDiffuse+reflectedLight.indirectDiffuse)/max(material.diffuseColor,vec3(.015)),1.);`)
+   if(uSurvey>1.5)gl_FragColor=vec4((reflectedLight.directDiffuse+reflectedLight.indirectDiffuse)/max(material.diffuseColor,vec3(.015)),1.);
+   if(uSurvey>2.5)gl_FragColor=vec4(vec3(dot(atlasLight,vec3(.2126,.7152,.0722))),1.);`)
  }
  return m
 }
