@@ -112,7 +112,18 @@ export function makeCeramic(act:Act,controls:OpticsControls,time:{value:number},
     s.fragmentShader=s.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
       if(uSurvey<.5&&tilePos.y<level)reflectedLight.directDiffuse*=causticLight(tilePos,level,tileSun,tileTime);
       #ifdef BATH_HDR_LIGHTING
-      if(uSurvey<.5&&tilePos.y<level)reflectedLight.indirectDiffuse*=causticLight(tilePos,level,tileSun,tileTime);
+      if(uSurvey<.5&&tilePos.y<level){
+        // The bath's indirect term is already baked, so an ungated caustic gain
+        // paints a moving water web into arcades that sit under no well at all.
+        // Gate it with the same gaussian well footprint used by the hall finish:
+        // caustics belong to the pools directly beneath an aperture.
+        vec2 wellP=tilePos.xz;float wellAccess=0.;
+        ${bathPlan.lightWells.map(w=>{
+          const b=w.bounds,c=[(b[0]+b[1])/2,(b[2]+b[3])/2],size=[(b[1]-b[0])*.75,(b[3]-b[2])*.75]
+          return `{vec2 q=(wellP-vec2(${c.map(n=>n.toFixed(5))}))/vec2(${size.map(n=>n.toFixed(5))});wellAccess=max(wellAccess,exp(-dot(q,q)));}`
+        }).join('\n')}
+        reflectedLight.indirectDiffuse*=mix(vec3(1.),causticLight(tilePos,level,tileSun,tileTime),smoothstep(.14,.52,wellAccess));
+      }
       #endif
       if(uSurvey<.5&&wall>.5&&tilePos.y>level&&tilePos.y<level+1.1){
         // A local reflected shimmer above the contact line, from the same wake.

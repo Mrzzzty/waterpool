@@ -73,6 +73,10 @@ export function basinShader(basin:Basin,edge:ReturnType<typeof shoreline>){
       if(t.y<h.t){h.t=t.y;h.normal=vec3(0.,0.,-sign(dir.z));}
     }
     ${edge.solids.map(r=>'boxHit(o,dir,vec3('+[r[0],r[4],r[2]].map(f)+'),vec3('+[r[1],r[5],r[3]].map(f)+'),h);').join('\n')}
+    // The wet arcades are true cylinders. Box proxies cut them as rectangles,
+    // so the survey comparison in realReceiver fails at every curved edge and
+    // the refraction falls back to a flat bed.
+    ${edge.arcs.map(a=>'arcHit(o,dir,'+a+',h);').join('\n')}
     return h;
   }
   // Visible section of the handrail on the hall stair. Solve the finite cylinder
@@ -213,7 +217,9 @@ export function basinShader(basin:Basin,edge:ReturnType<typeof shoreline>){
       vec3 refractNormal=normalize(vec3(-slope.x*mix(1.,.7,look),1.,-slope.y*mix(1.,.7,look)));
       vec3 floorLight=receiver(vWorld,refract(I,refractNormal,1./uIOR),distanceInWater);
       ${bath?'if(uRefractionDebug>.5){gl_FragColor=vec4(floorLight,1.);return;}':''}
-      vec2 uv=vReflection.xy/max(vReflection.w,.0001)+reflectionSlope*mix(.045,clamp(.18/max(c,.22),.18,.65),look);
+      // Keep architecture upright: vertical smear only, a quarter of it across.
+      float reflectionScale=mix(.045,clamp(.18/max(c,.22),.18,.65),look);
+      vec2 uv=vReflection.xy/max(vReflection.w,.0001)+reflectionSlope*vec2(${poolLook.reflectionAcross},1.)*reflectionScale;
       vec3 mirror=texture2D(uMirror,clamp(uv,.002,.998)).rgb;
       float fade=smoothstep(0.,.025,min(min(uv.x,uv.y),min(1.-uv.x,1.-uv.y)));
       mirror=mix(vec3(.15,.19,.17),mirror,fade);

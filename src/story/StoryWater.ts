@@ -181,5 +181,14 @@ export class StoryWater {
     }
     return surface
   }
-  dispose(){this.ripples.dispose();for(const t of this.targets)t.dispose();for(const s of this.surfaces)s.getRenderTarget().dispose()}
+  dispose(){
+    this.ripples.dispose()
+    for(const t of this.targets)t.dispose()
+    for(const s of this.surfaces){
+      s.getRenderTarget().dispose()
+      s.geometry?.dispose()
+      const material=s.material
+      if(Array.isArray(material))material.forEach(m=>m?.dispose());else material?.dispose()
+    }
+  }
 }

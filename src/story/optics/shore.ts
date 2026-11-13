@@ -2,6 +2,7 @@ import * as T from 'three'
 import {type Act,type Basin} from '../rooms'
 import {maps} from '../../world/mapPlan'
 import {compileMap,detailSolids} from '../../world/compileMap'
+import {arcArguments} from '../bathGeometry'
 export const floatLiteral=(n:number)=>n.toFixed(5)
 export const rectLiteral=(r:number[])=>'vec4('+r.slice(0,4).map(floatLiteral).join(',')+')'
 const rect=(r:{x0:number;x1:number;z0:number;z1:number})=>[r.x0,r.x1,r.z0,r.z1]
@@ -36,5 +37,5 @@ export function shoreline(act:Act,basin:Basin){
  const geometry=new T.PlaneGeometry(east-west,south-north,xs.length-1,zs.length-1)
  const pos=geometry.attributes.position
  for(let z=0;z<zs.length;z++)for(let x=0;x<xs.length;x++)pos.setXY(z*xs.length+x,xs[x]-(west+east)/2,(north+south)/2-zs[z])
- return {geometry,glsl,blocks,solids,well,bath,stairs}
+ return {geometry,glsl,blocks,solids,well,bath,stairs,arcs:bath?arcArguments:[]}
 }

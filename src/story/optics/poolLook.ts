@@ -3,7 +3,10 @@ import bath from '../quietBath.json'
 // Runtime tuning; do not alter the frozen Cycles reference or its bake inputs.
 export const poolLook={absorption:[.75,.11,.07],scattering:[.08,.14,.15],
   specular:.16,clearcoat:.06,coatRoughness:.21,roughness:.38,
-  meniscusHeight:.0012,meniscusWidth:.012} as const
+  meniscusHeight:.0012,meniscusWidth:.012,
+  // Grazing distortion is mostly vertical in reality. A 1:1 offset slides door
+  // frames and column feet sideways and reads as jelly rather than water.
+  reflectionAcross:.26} as const
 export function poolLookControls(){
   const local=/^(localhost|127\.0\.0\.1)$/.test(location.hostname),q=new URLSearchParams(location.search)
   return{uPoolLook:{value:local&&q.get('waterLook')==='legacy'?0:1},

@@ -7,8 +7,11 @@ import {captureSize} from '../scene/renderQuality'
 export class BathWallReflection {
   readonly mesh:Reflector
   readonly ready={value:0}
+  // Planar weight, independent of `ready`. `ready` also drops to 0 while the
+  // target is being redrawn, so it can never act as a distance blend.
+  readonly fade={value:0}
   private readonly fallback=new T.DataTexture(new Uint8Array([0,0,0,255]),1,1)
-  readonly uniforms:{bathWallMap:{value:T.Texture};bathWallMatrix:{value:T.Matrix4};bathWallReady:{value:number}}
+  readonly uniforms:{bathWallMap:{value:T.Texture};bathWallMatrix:{value:T.Matrix4};bathWallReady:{value:number};bathWallFade:{value:number}}
   constructor(eye:T.Camera,enabled:()=>boolean){
     this.mesh=new Reflector(new T.PlaneGeometry(9.62,5.23),{textureWidth:1,textureHeight:1,multisample:0,clipBias:.001})
     this.fallback.needsUpdate=true
@@ -19,7 +22,7 @@ export class BathWallReflection {
     const mat=mesh.material as T.ShaderMaterial
     mat.colorWrite=false;mat.depthWrite=false
     mesh.userData.excludeFromRefraction=true
-    this.uniforms={bathWallMap:{value:mesh.getRenderTarget().texture},bathWallMatrix:{value:new T.Matrix4()},bathWallReady:this.ready}
+    this.uniforms={bathWallMap:{value:mesh.getRenderTarget().texture},bathWallMatrix:{value:new T.Matrix4()},bathWallReady:this.ready,bathWallFade:this.fade}
     const inverseWorld=new T.Matrix4()
     // Reflect the same architectural glazing visible to the player. The bake's
     // area lights are illumination helpers, not additional visible fixtures.
@@ -31,7 +34,12 @@ export class BathWallReflection {
     let last=-Infinity
     mesh.onBeforeRender=(gl,scene,camera,geometry,material,group)=>{
       if(camera!==eye)return
-      if(!enabled()||camera.position.x<=-11.13){this.ready.value=0;return}
+      // Cross the archway as a ramp, not a switch. The planar pass starts a
+      // little before the wall is visible and its weight reaches one exactly
+      // where the box-projected probe stops being convincing.
+      const fade=T.MathUtils.smoothstep(camera.position.x,-11.62,-11.13)
+      this.fade.value=fade
+      if(!enabled()||fade<=0){this.ready.value=0;return}
       const now=performance.now()
       if(this.ready.value&&lastProjection.equals(camera.projectionMatrix)&&now-last<1000/30)return
       if(lastView.equals(camera.matrixWorld)&&lastProjection.equals(camera.projectionMatrix)&&now-last<150)return

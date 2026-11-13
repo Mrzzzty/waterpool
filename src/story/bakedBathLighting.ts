@@ -15,7 +15,7 @@ const probeGLSL=/* glsl */`
 #ifdef ENVMAP_TYPE_CUBE_UV
 uniform sampler2D bathProbe0,bathProbe1,bathProbe2;
 uniform highp sampler3D bathVisibilityVolume;
-uniform sampler2D bathWallMap;uniform mat4 bathWallMatrix;uniform float bathWallReady;
+uniform sampler2D bathWallMap;uniform mat4 bathWallMatrix;uniform float bathWallReady,bathWallFade;
 ${bathProbeGeometryGLSL}
 vec3 bathVisibilityAt(vec3 p){
   return texture(bathVisibilityVolume,p*vec3(${visibilityScale.map(v=>v.toFixed(9))})+vec3(${visibilityOffset.map(v=>v.toFixed(9))})).rgb;
@@ -28,6 +28,7 @@ vec3 bathParallax(vec3 direction,vec3 origin,vec3 lo,vec3 hi,vec3 wallHit,float 
   return normalize(mix(p+direction*travel,wallHit,wallWeight)-origin);
 }
 vec4 sampleBathProbe(vec3 direction,float roughness){
+  vec3 planarColour=vec3(0.);float planarWeight=0.;
   if(bathWallReady>.5&&roughness<.4&&abs(bakedBathPosition.x+11.15)<.015){
     vec4 q=bathWallMatrix*vec4(bakedBathPosition,1.);
     vec2 uv=q.xy/q.w;
@@ -35,7 +36,8 @@ vec4 sampleBathProbe(vec3 direction,float roughness){
       // Both ceramic lobes need this wall's actual occlusion. Limit planar
       // filtering to moderately smooth receivers; rough plaster uses PMREM.
       float lod=log2(max(1.,roughness*roughness*900.));
-      return vec4(texture2DLodEXT(bathWallMap,uv,lod).rgb,1.);
+      planarColour=texture2DLodEXT(bathWallMap,uv,lod).rgb;
+      planarWeight=bathWallFade;
     }
   }
   // Keep smooth local box projection for the finite-resolution radiance maps.
@@ -74,7 +76,8 @@ vec4 sampleBathProbe(vec3 direction,float roughness){
   vec3 radiance=textureCubeUV(bathProbe0,east,probeRoughness.x).rgb*weights.x
     +textureCubeUV(bathProbe1,middle,probeRoughness.y).rgb*weights.y
     +textureCubeUV(bathProbe2,west,probeRoughness.z).rgb*weights.z;
-  return vec4(mix(vec3(.035,.042,.035),radiance/max(sum,.00001),smoothstep(.0001,.001,sum)),1.);
+  vec4 probe=vec4(mix(vec3(.035,.042,.035),radiance/max(sum,.00001),smoothstep(.0001,.001,sum)),1.);
+  return mix(probe,vec4(planarColour,1.),planarWeight);
 }
 #endif
 `
