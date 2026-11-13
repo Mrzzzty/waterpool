@@ -11,8 +11,14 @@ export function atlasMaterial(plan:MapPlan,library:SurfaceLibrary,light:AtlasLig
  // inspected without guessing whether irradiance survives to shading.
  const surveyGI=typeof location!=='undefined'&&location.search.includes('gi=survey')
  if(surveyGI)controls.uSurvey.value=3
- m.customProgramCacheKey=()=>`atlas-v1-${plan.id}-${fixture}`
+ // The gain is a uniform, but its magnitude is baked into the shader only as a
+ // multiply. Keep the diagnostic overrides in the cache key, otherwise a cached
+ // program silently ignores a changed weight.
+ const giKey=typeof location!=='undefined'?`${location.search.includes('gi=off')?'0':'1'}:${new URLSearchParams(location.search).get('giWeight')||'d'}`:'1:d'
+ m.customProgramCacheKey=()=>`atlas-v1-${plan.id}-${fixture}-${giKey}`
  m.onBeforeCompile=s=>{
+  // Keep the compiled shader reachable so uniforms can be inspected at runtime.
+  m.userData.shader=s
   Object.assign(s.uniforms,controls,{atlasTime:light.time,atlasSun:light.sun,atlasGain:light.gain,atlasMain:light.main??{value:plan.pools[0]?.level??-100},atlasSide:light.side??{value:plan.pools[1]?.level??-100}})
   bindSurfaceLibrary(s,library)
   s.vertexShader=`attribute vec3 atlasGI;attribute float atlasFinish;varying vec3 atlasLight,atlasPosition,atlasNormal;varying vec2 atlasUV;varying float atlasSurface;\n`+s.vertexShader

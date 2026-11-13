@@ -55,6 +55,19 @@ app.whenReady().then(async()=>{
   // A normal (non-offscreen) Electron window must be presented before capture;
   // otherwise capturePage may keep returning its first compositor surface.
   if(process.env.POOL_FOREGROUND==='1'){win.show();win.focus();await sleep(900)}
+  if(process.env.POOL_GI_PROBE==='1'){
+   const probe=await js(`(()=>{const g=window.__inspection;const out=[];const seen=new Set();
+    g.scene.traverse(o=>{const m=o.material;if(!m||!m.userData||!m.userData.shader)return;
+     const s=m.userData.shader;if(seen.has(s))return;seen.add(s);
+     out.push({uuid:m.uuid,type:m.type,
+      gain:s.uniforms.atlasGain?s.uniforms.atlasGain.value:'missing',
+      hasLight:s.uniforms.atlasLight?'yes':'no',
+      hasCode:s.fragmentShader.includes('irradiance+=atlasLight*atlasGain'),
+      hasMapsInclude:s.fragmentShader.includes('#include <lights_fragment_maps>'),
+      len:s.fragmentShader.length})});
+    return {count:out.length,materials:out.slice(0,6)}})()`)
+   results.push({check:'gi-probe',...probe})
+  }
   await snapshot('entry',[-4.6,1.83,28.6],[-10.1,.3,28.15])
   await snapshot('curve',[-12,1.17,29.8],[-17.2,1.35,27.1])
   if(process.env.POOL_WATER_DIAG==='1'){
