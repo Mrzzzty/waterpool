@@ -1,0 +1,72 @@
+[
+  {
+    "id": "mosaic",
+    "detailResolution": 2048,
+    "colorResolution": 1024,
+    "periodMetres": 1.28,
+    "heightRangeMetres": [
+      0.0,
+      0.003347689110202288
+    ],
+    "normalConvention": "OpenGL +Y",
+    "colorSpace": "sRGB",
+    "detailColorSpace": "linear",
+    "runtimePacking": "normal-roughness: RGB=normal XYZ, A=roughness"
+  },
+  {
+    "id": "glaze",
+    "detailResolution": 2048,
+    "colorResolution": 1024,
+    "periodMetres": 1.28,
+    "heightRangeMetres": [
+      0.0,
+      0.004133797522860546
+    ],
+    "normalConvention": "OpenGL +Y",
+    "colorSpace": "sRGB",
+    "detailColorSpace": "linear",
+    "runtimePacking": "normal-roughness: RGB=normal XYZ, A=roughness"
+  },
+  {
+    "id": "plaster",
+    "detailResolution": 1024,
+    "colorResolution": 512,
+    "periodMetres": 2.4,
+    "heightRangeMetres": [
+      0.0003874617422136345,
+      0.002208649033098179
+    ],
+    "normalConvention": "OpenGL +Y",
+    "colorSpace": "sRGB",
+    "detailColorSpace": "linear",
+    "runtimePacking": "normal-roughness: RGB=normal XYZ, A=roughness"
+  },
+  {
+    "id": "limestone",
+    "detailResolution": 2048,
+    "colorResolution": 1024,
+    "periodMetres": 2.4,
+    "heightRangeMetres": [
+      -0.0007653270935968253,
+      0.003945269022768778
+    ],
+    "normalConvention": "OpenGL +Y",
+    "colorSpace": "sRGB",
+    "detailColorSpace": "linear",
+    "runtimePacking": "normal-roughness: RGB=normal XYZ, A=roughness"
+  },
+  {
+    "id": "terrazzo",
+    "detailResolution": 1024,
+    "colorResolution": 1024,
+    "periodMetres": 1.6,
+    "heightRangeMetres": [
+      2.7693164714845564e-05,
+      0.0004944006081829308
+    ],
+    "normalConvention": "OpenGL +Y",
+    "colorSpace": "sRGB",
+    "detailColorSpace": "linear",
+    "runtimePacking": "normal-roughness: RGB=normal XYZ, A=roughness"
+  }
+]

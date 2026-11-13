@@ -1,0 +1,12 @@
+{
+  "tileSize": 0.2,
+  "groutHalfWidth": 0.0015,
+  "ceramicColor": [0.75, 0.78, 0.70],
+  "roughness": 0.33,
+  "clearcoat": 0.65,
+  "clearcoatRoughness": 0.055,
+  "verticalFov": 52,
+  "exposureStops": 0.5,
+  "worldRadiance": [0.1584, 0.1656, 0.1548],
+  "bakeExposureStops": -2
+}

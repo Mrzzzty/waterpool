@@ -1,0 +1,41 @@
+{
+  "name": "aureole-poolrooms",
+  "private": true,
+  "version": "1.0.0",
+  "description": "阈限深水区：地下泳池馆的第一人称验收",
+  "author": "Mrzzz",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build && node scripts/build-story.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "desktop": "npm run build && electron .",
+    "desktop:dev": "electron . --dev",
+    "desktop:pack": "npm run build && electron-builder --win portable"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.4.0",
+    "@react-three/postprocessing": "^3.0.4",
+    "postprocessing": "^6.37.8",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "three": "~0.180.0"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/three": "~0.180.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "electron": "^43.3.0",
+    "electron-builder": "^26.18.0",
+    "esbuild": "0.28.2",
+    "meshoptimizer": "0.22.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.9"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "sourceFingerprint": "d97051b11a6097d09bb7b0235b92acb9940d3c4b6a6b4d1721f519148a9d443f",
+  "blender": "5.2.2 LTS",
+  "asset": "poolrooms-baked.glb",
+  "giRange": 4,
+  "giMethod": "Cycles diffuse indirect vertex bake, 256 samples / 4 diffuse bounces / occluded sky / topology-aware denoise / fixtures included",
+  "sun": {
+    "direction": [
+      1,
+      0.86,
+      -0.36
+    ],
+    "intensity": 3.5,
+    "color": "#fff1db"
+  },
+  "meshes": 71,
+  "vertices": 301216,
+  "triangles": 557620,
+  "bytes": 6011012,
+  "dynamicLighting": "Static sun direction, runtime strength/color follows day cycle",
+  "slideThickness": 0.028,
+  "contentHash": "dafafd900950",
+  "uncompressedBytes": 20794160,
+  "runtimeVertices": 361725,
+  "compression": "EXT_meshopt_compression; positions and material UV metadata lossless"
+}

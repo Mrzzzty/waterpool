@@ -1,0 +1,28 @@
+:root{color-scheme:dark;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:#f3f1dd;background:#34504e}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button,a,input{accent-color:#bbd1ba}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #f6e9ba;outline-offset:4px}
+.inspection{position:relative;width:100%;height:100dvh;overflow:hidden}.menu{position:absolute;inset:0;display:flex;align-items:flex-end;padding:clamp(20px,6vw,90px);background:linear-gradient(80deg,#0c2427c9,transparent 70%)}.sheet{max-width:min(460px,96vw);max-height:92dvh;overflow:auto}.sheet h1{font:400 clamp(34px,4vw,60px)/1.3 "Songti SC",SimSun,serif;letter-spacing:.12em;margin:0 0 14px}.sheet p{font-size:14px;letter-spacing:1px;line-height:1.8;color:#e4e8d7}.controls{margin:24px 0;color:#e2e6d3;font-size:12px;line-height:1.95}.controls span{display:block}.sheet label{display:flex;align-items:center;gap:8px;font-size:12px;margin:16px 0}.sheet button,.sheet a{display:inline-block;margin:6px 9px 5px 0;padding:9px 14px;background:#243735c9;border:1px solid #eee9bd55;text-decoration:none;color:#f2f1dc;cursor:pointer;font-size:12px;letter-spacing:1px}.sheet button.primary{background:#e6ead7;color:#233e3b;border-color:#eff0de;padding:13px 27px}.sheet .tape-row{display:block}.sheet .transcript{font-size:12px;line-height:2}.caption{position:absolute;bottom:12%;left:50%;transform:translateX(-50%);width:max-content;max-width:90%;text-align:center;font-size:clamp(14px,1.35vw,21px);letter-spacing:2px;color:#faf8e9;text-shadow:0 1px 5px #152328,0 0 14px #0c2129;pointer-events:none}.caption.recorded{color:#d8e9cf;background:#102922ad;padding:9px 16px;font-family:monospace}.caption i{font-size:10px;margin-right:12px}.drag-note{position:absolute;bottom:20px;right:20px;font-size:11px}.water-glass,.breath,.film,.transition{position:absolute;inset:0;pointer-events:none}.water-glass{background:linear-gradient(155deg,#50958f55,#073b42ef);mix-blend-mode:multiply}.breath{background:radial-gradient(ellipse at center,transparent 10%,#071419f2 72%)}.archive-film .film{background:repeating-linear-gradient(0deg,#4a321829 0 1px,transparent 2px 4px);box-shadow:inset 0 0 15vw #44351c65}.transition{background:#a6bab2}.ending .menu{background:#e3decf;color:#283d3b}.ending .sheet p{color:#52645f}.error{position:absolute;inset:0;display:grid;place-items:center;z-index:5;background:#243735}
+
+.menu.menu-pause{padding:clamp(22px,3.7vw,64px);background:radial-gradient(ellipse 560px 420px at 0% 100%,#0c2427e6 15%,#0c242799 66%,transparent 100%)}
+.menu-pause .sheet h1{font-size:clamp(29px,3vw,44px);margin-bottom:5px}
+.menu-pause details{font-size:12px;color:#f1f1de}.menu-pause summary{cursor:pointer;display:list-item;width:fit-content}.menu-pause details .controls{margin:8px 0}
+.inspection{position:absolute!important;inset:0;pointer-events:none;color:#f3f1dd}.inspection .menu,.inspection .error{pointer-events:auto}html,body,#root{height:100%}
+
+.aim{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px;pointer-events:none}
+.aim i{width:5px;height:5px;border-radius:50%;background:#f8f6e6;opacity:.38;box-shadow:0 0 0 1.5px #0412168c,0 0 6px #08171bcc;transition:width .16s,height .16s,opacity .16s,box-shadow .16s}
+.aim.is-on i{width:7px;height:7px;opacity:.98;box-shadow:0 0 0 6px #f8f6e61f,0 0 8px #08171be0}
+.aim span{font-size:11px;letter-spacing:.16em;color:#f4f2df;opacity:0;transform:translateY(-2px);transition:opacity .18s,transform .18s;background:#0a1c20a6;padding:3px 9px;border-radius:2px;text-shadow:0 1px 3px #041014}
+.aim.is-on span{opacity:.92;transform:none}
+.story-stamina{position:absolute;left:50%;bottom:6.4%;transform:translateX(-50%);width:132px;height:2px;background:#e8ecd93d;opacity:0;transition:opacity .4s;pointer-events:none;box-shadow:0 0 6px #08171b66}
+.story-stamina.is-on{opacity:1}
+.story-stamina i{display:block;height:100%;background:#eef1d8;transform-origin:left center;transition:transform .1s linear}
+.story-stamina.is-tired i{background:#e2a163}
+
+.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 74% at 50% 47%,transparent 48%,#00000012 82%,#00000026 100%)}
+.optics-lab{position:absolute;right:clamp(14px,3vw,50px);bottom:clamp(16px,4vh,44px);width:min(295px,calc(100vw - 32px));max-height:85dvh;overflow:auto;pointer-events:auto;background:#102923ed;color:#e5ede0;padding:19px 21px 15px;border:1px solid #9eb8a84a;border-top:2px solid #b4ceba;border-radius:3px;font:13px/1.5 "Microsoft YaHei",sans-serif}
+.optics-lab h1{font:normal 21px/1.4 "Songti SC",SimSun,serif;letter-spacing:.08em;margin:0 0 14px}
+.optics-views,.optics-lab footer,.optics-slider span,.optics-lab p{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.optics-lab button,.optics-lab a{font:inherit;color:#d7e4d9;background:none;border:0;cursor:pointer;padding:3px 0;text-decoration:none}
+.optics-views button{border-bottom:1px solid #77938755;font-size:12px;padding:3px}
+.optics-views button[aria-pressed=true]{border-color:#d8e9bb;color:#f1f6d6}
+.optics-slider{display:block;margin:12px 0}.optics-slider output,.optics-lab strong{font:12px monospace;color:#c8ddc8}
+.optics-slider input{width:100%;display:block;accent-color:#b3cbb1;height:16px;margin:2px 0 0;cursor:pointer}
+.optics-lab footer{border-top:1px solid #adc5b333;padding-top:9px;margin-top:13px}.optics-lab footer button,.optics-lab footer a,.optics-lab p{font-size:12px}

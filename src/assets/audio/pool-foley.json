@@ -1,0 +1,86 @@
+{
+  "dry": [
+    {
+      "offset": 0.0,
+      "duration": 0.34,
+      "sourceTime": 1.473
+    },
+    {
+      "offset": 0.38,
+      "duration": 0.34,
+      "sourceTime": 2.946
+    },
+    {
+      "offset": 0.76,
+      "duration": 0.34,
+      "sourceTime": 5.809
+    },
+    {
+      "offset": 1.14,
+      "duration": 0.34,
+      "sourceTime": 7.19
+    },
+    {
+      "offset": 1.52,
+      "duration": 0.34,
+      "sourceTime": 8.552
+    },
+    {
+      "offset": 1.9,
+      "duration": 0.34,
+      "sourceTime": 9.919
+    },
+    {
+      "offset": 2.28,
+      "duration": 0.34,
+      "sourceTime": 14.862
+    },
+    {
+      "offset": 2.66,
+      "duration": 0.34,
+      "sourceTime": 15.684
+    }
+  ],
+  "wet": [
+    {
+      "offset": 3.04,
+      "duration": 0.55,
+      "sourceTime": 7.22
+    },
+    {
+      "offset": 3.63,
+      "duration": 0.55,
+      "sourceTime": 8.159
+    },
+    {
+      "offset": 4.22,
+      "duration": 0.55,
+      "sourceTime": 13.94
+    },
+    {
+      "offset": 4.81,
+      "duration": 0.55,
+      "sourceTime": 17.996
+    },
+    {
+      "offset": 5.4,
+      "duration": 0.55,
+      "sourceTime": 23.197
+    },
+    {
+      "offset": 5.99,
+      "duration": 0.55,
+      "sourceTime": 27.931
+    },
+    {
+      "offset": 6.58,
+      "duration": 0.55,
+      "sourceTime": 36.591
+    },
+    {
+      "offset": 7.17,
+      "duration": 0.55,
+      "sourceTime": 41.297
+    }
+  ]
+}

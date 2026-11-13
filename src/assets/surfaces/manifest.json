@@ -1,0 +1,59 @@
+{
+  "seed": 3719,
+  "padding": 16,
+  "materials": [
+    {
+      "id": "porcelain",
+      "period": 1.6,
+      "normal": "OpenGL +Y; TextureLoader flipY=true",
+      "size": 1024
+    },
+    {
+      "id": "reed_glaze",
+      "period": 1.6,
+      "normal": "OpenGL +Y; TextureLoader flipY=true",
+      "size": 1024
+    },
+    {
+      "id": "travertine",
+      "period": 2.4,
+      "normal": "OpenGL +Y; TextureLoader flipY=true",
+      "size": 1024
+    },
+    {
+      "id": "blue_mosaic",
+      "period": 1.6,
+      "normal": "OpenGL +Y; TextureLoader flipY=true",
+      "size": 1024
+    }
+  ],
+  "hq": {
+    "padding": 32,
+    "materials": [
+      {
+        "id": "porcelain",
+        "period": 1.6,
+        "normal": "OpenGL +Y; TextureLoader flipY=true",
+        "size": 2048
+      },
+      {
+        "id": "reed_glaze",
+        "period": 1.6,
+        "normal": "OpenGL +Y; TextureLoader flipY=true",
+        "size": 2048
+      },
+      {
+        "id": "travertine",
+        "period": 2.4,
+        "normal": "OpenGL +Y; TextureLoader flipY=true",
+        "size": 2048
+      },
+      {
+        "id": "blue_mosaic",
+        "period": 1.6,
+        "normal": "OpenGL +Y; TextureLoader flipY=true",
+        "size": 2048
+      }
+    ]
+  }
+}

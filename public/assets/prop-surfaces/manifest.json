@@ -1,0 +1,102 @@
+{
+  "normalConvention": "OpenGL +Y",
+  "colorSpace": "sRGB; normal and roughness linear",
+  "materials": [
+    {
+      "id": "timber",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "periodMetres": [
+        1.8,
+        0.34
+      ],
+      "maps": [
+        "normal",
+        "roughness",
+        "color"
+      ],
+      "heightRangeMetres": [
+        -0.0003117721589403432,
+        4.455582019627138e-05
+      ]
+    },
+    {
+      "id": "steel",
+      "resolution": [
+        512,
+        512
+      ],
+      "periodMetres": [
+        0.35,
+        0.35
+      ],
+      "maps": [
+        "normal",
+        "roughness"
+      ],
+      "heightRangeMetres": [
+        -1.615617763170398e-05,
+        8.035206111763855e-06
+      ]
+    },
+    {
+      "id": "paint",
+      "resolution": [
+        512,
+        512
+      ],
+      "periodMetres": [
+        0.16,
+        0.16
+      ],
+      "maps": [
+        "normal",
+        "roughness"
+      ],
+      "heightRangeMetres": [
+        -1.906427176209833e-05,
+        1.8986063420895045e-05
+      ]
+    },
+    {
+      "id": "gelcoat",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "periodMetres": [
+        0.65,
+        0.65
+      ],
+      "maps": [
+        "normal",
+        "roughness"
+      ],
+      "heightRangeMetres": [
+        -3.678759884844989e-05,
+        1.1452008974738499e-05
+      ]
+    },
+    {
+      "id": "rubber",
+      "resolution": [
+        512,
+        512
+      ],
+      "periodMetres": [
+        0.24,
+        0.24
+      ],
+      "maps": [
+        "normal",
+        "roughness"
+      ],
+      "heightRangeMetres": [
+        -1.4933707624284419e-05,
+        0.0006649845022642453
+      ]
+    }
+  ]
+}

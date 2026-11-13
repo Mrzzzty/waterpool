@@ -1,0 +1,21 @@
+{
+  "sources": [
+    {
+      "id": "0179",
+      "page": "https://bigsoundbank.com/steps-slipper-on-tiling-s0179.html",
+      "original": "https://bigsoundbank.com/UPLOAD/bwf-en/0179.wav",
+      "author": "Joseph SARDIN / BigSoundBank",
+      "license": "CC0-1.0",
+      "sha256": "35d150c41e2faeca87786039202cf3b3078d8715b5cf2fd41e26e18331583f77"
+    },
+    {
+      "id": "0690",
+      "page": "https://bigsoundbank.com/shoes-in-the-water-s0690.html",
+      "original": "https://bigsoundbank.com/UPLOAD/bwf-en/0690.wav",
+      "author": "Joseph SARDIN / BigSoundBank",
+      "license": "CC0-1.0",
+      "sha256": "69b9672d3d4a62d930c404383c41112310be461b4ec0ee58fc1550a79ac2239b"
+    }
+  ],
+  "processing": "mono 32 kHz, 65 Hz high-pass, isolated steps, short fades, peak <= 0.65"
+}
